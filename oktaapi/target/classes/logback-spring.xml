@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE logback>
+<configuration>
+	<!-- This will include a console appender and file appender.  
+		 We don't want that if we are using JSON.
+	<include resource="org/springframework/boot/logging/logback/base.xml"/>
+	 -->
+	<include resource="org/springframework/boot/logging/logback/defaults.xml" />
+	
+	<property name="LOG_FILE" value="/home/vince/logs/okta/oktareader.log" />
+	<property name="ERROR_LOG_FILE" value="/home/vince/logs/okta/oktareaderErrors.log" />
+	<property name="NEXT_PAGE" value="/home/vince/logs/okta/nextPageUri.log" />
+	
+	<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+	    <encoder>
+	      <pattern>%d{yyyy-MM-dd};%d{HH:mm:ss.SSS};[%thread];%5p;%logger{25};%m%n</pattern>
+	    </encoder>
+	    <file>${LOG_FILE}</file>
+	    <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+	        <fileNamePattern>${LOG_FILE}_%i</fileNamePattern>
+	        <minIndex>1</minIndex>
+	        <maxIndex>5</maxIndex>
+        </rollingPolicy>
+	    <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+	        <maxFileSize>200MB</maxFileSize>
+	    </triggeringPolicy>
+    </appender>
+    <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+	    <encoder>
+	      <pattern>%d{yyyy-MM-dd};%d{HH:mm:ss.SSS};[%thread];%5p;%logger{25};%m%n</pattern>
+	    </encoder>
+	    <file>${ERROR_LOG_FILE}</file>
+	    <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+	        <fileNamePattern>${ERROR_LOG_FILE}_%i</fileNamePattern>
+	        <minIndex>1</minIndex>
+	        <maxIndex>3</maxIndex>
+        </rollingPolicy>
+	    <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+	        <maxFileSize>200MB</maxFileSize>
+	    </triggeringPolicy>
+    </appender>
+    <appender name="NEXT_URI" class="ch.qos.logback.core.rolling.RollingFileAppender">
+	    <encoder>
+	      <pattern>%m%n</pattern>
+	    </encoder>
+	    <file>${NEXT_PAGE}</file>
+	    <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+	        <fileNamePattern>${NEXT_PAGE}_%i</fileNamePattern>
+	        <minIndex>1</minIndex>
+	        <maxIndex>2</maxIndex>
+        </rollingPolicy>
+	    <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+	        <maxFileSize>100MB</maxFileSize>
+	    </triggeringPolicy>
+    </appender>
+	<appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+	    <encoder>
+	        <pattern>%d{yyyy-MM-dd};%d{HH:mm:ss.SSS};[%thread];%5p;%logger{25};%m%n</pattern>
+        <charset>utf8</charset>
+        </encoder>
+	</appender>
+	<springProfile name="prod">   	   		    
+	  	<root level="info">
+	  		<appender-ref ref="Console"/>
+	  		<appender-ref ref="FILE"/>
+	  	</root>   
+	  	<logger name="oktareadererrors" additivity="false" level="info">
+	  		<appender-ref ref="Console"/>
+	  		<appender-ref ref="ERROR_FILE"/>
+		</logger>   
+		<logger name="oktareadernextUrl" additivity="false" level="info">
+	  		<appender-ref ref="Console"/>
+	  		<appender-ref ref="NEXT_URI"/>
+		</logger>     
+		<logger name="oktarestcall" additivity="false" level="info">
+	  		<appender-ref ref="Console"/>
+	  		<appender-ref ref="FILE"/>
+		</logger>
+  	</springProfile>
+  
+  	<springProfile name="dev">   	   	
+		<root level="debug">
+	  		<appender-ref ref="Console"/>
+	  		<appender-ref ref="FILE"/>
+	  	</root>   
+	  	<logger name="oktareadererrors" additivity="false" level="debug">
+	  		<appender-ref ref="Console"/>
+	  		<appender-ref ref="ERROR_FILE"/>
+		</logger>   
+		<logger name="oktareadernextUrl" additivity="false" level="debug">
+	  		<appender-ref ref="Console"/>
+	  		<appender-ref ref="NEXT_URI"/>
+		</logger>     
+		<logger name="oktarestcall" additivity="false" level="debug">
+	  		<appender-ref ref="Console"/>
+	  		<appender-ref ref="FILE"/>
+		</logger>
+  	</springProfile>
+</configuration>
